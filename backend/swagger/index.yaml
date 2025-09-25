@@ -1,0 +1,252 @@
+openapi: 3.0.1
+info:
+  title: Attorney-review-system
+  version: "1.0.0"
+servers:
+- url: http://localhost:5001/api/v1
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+paths:
+  /auth/signup:
+    post:
+      summary: User SignUp
+      description: Register a new user with email
+      tags:
+      - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - firstName
+              - lastName
+              - email
+              - password
+              properties:
+                firstName:
+                  type: string
+                  example: John
+                lastName:
+                  type: string
+                  example: Doe
+                email:
+                  type: string
+                  example: john.doe@example.com
+                password:
+                  type: string
+                  example: myPassword
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User created successfully
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      firstName:
+                        type: string
+                      lastName:
+                        type: string
+                      email:
+                        type: string
+                  token:
+                    type: string
+        '400':
+          description: Bad request or validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid input
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Internal server error
+
+  /auth/login:
+    post:
+      summary: User Login
+      description: Authenticate user and return jwt token
+      tags:
+      - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - email
+              - password
+              properties:
+                email:
+                  type: string
+                  example: john.doe@example.com
+                password:
+                  type: string
+                  example: mysecurepassword
+
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      firstName:
+                        type: string
+                      lastName:
+                        type: string
+                      email:
+                        type: string
+                  token:
+                    type: string
+        '400':
+          description: Invalid credentials
+        '500':
+          description: Internal server error
+
+  /auth/logout:
+    post:
+      description: User Logout
+      summary: Clear jwt cookie and logout
+      tags:
+      - Auth
+      responses:
+        '200':
+          description: Logged out successfully
+        '500':
+          description: Internal server error
+
+  /auth/profile:
+    get:
+      description: Get user profile
+      summary: Retrieve the logged-in user's profile
+      security:
+      - bearerAuth: []
+      tags:
+      - Auth
+      responses:
+        '200':
+          description: User profile retrieved successfully
+        '401':
+          description: Unauthorized user
+        '500':
+          description: Internal server error
+
+  /admin/approvals:
+    get:
+      summary: Get pending attorney approvals
+      description: Retrieve all attorneys with status 'Pending' awaiting approvals.
+      tags:
+      - Admin
+      responses:
+        '200':
+          description: List of pending approval requests
+        '404':
+          description: No pending requests
+        '500':
+          description: Internal server error
+
+  /admin/{userId}/approve:
+    patch:
+      summary: Approve attorney
+      description: Approve a user with role attorney and change status to Approved
+      tags:
+      - Admin
+      parameters:
+      - in: path
+        name: userId
+        required: true
+        schema:
+          type: string
+        description: id of user to Approve
+
+      responses:
+        '200':
+          description: Attorney approved successfully
+        '404':
+          description: Request not found
+        '500':
+          description: Internal server error
+
+  /admin/{userId}/reject:
+    patch:
+      summary: Reject attorney
+      description: Reject a user for role attorney and set status as Rejected
+      tags:
+      - Admin
+      parameters:
+      - in: path
+        name: userId
+        required: true
+        schema:
+          type: string
+        description: Id of the user to Reject
+
+      responses:
+        '200':
+          description: Attorney rejected successfully
+        '404':
+          description: Request not found
+        '500':
+          description: Internal server error
+
+  /attorney/add-client:
+    post:
+      description: Assign a client to an attorney
+      summary: Attorney can add a client under him using client's Id
+      tags:
+      - Attorney
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - clientId
+              properties:
+                type: string
+                example: "clientId"
+
+      responses:
+        '201':
+          description: Client successfully assigned to attorney
+        '403':
+          description: User is not an attorney
+        '500':
+          description: Internal server error

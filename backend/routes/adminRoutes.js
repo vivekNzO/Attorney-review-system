@@ -4,8 +4,8 @@ import { getPendingApprovals,approveAttorney, rejectAttorney } from '../controll
 const router = express.Router()
 
 router.get("/approvals",getPendingApprovals)
-router.put("/approvals/:userId/approve",approveAttorney)
-router.put("/approvals/:userId/reject",rejectAttorney)
+router.patch("/approvals/:userId/approve",approveAttorney)
+router.patch("/approvals/:userId/reject",rejectAttorney)
 
 
 export default router
