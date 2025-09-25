@@ -16,8 +16,14 @@ datasource db {
 
 model Role{
   id String @id @map("_id") @default(auto()) @db.ObjectId
-  role String @unique
+  roleName String @unique
   users User[]
+}
+
+enum UserStatus {
+  Approved
+  Pending
+  Rejected
 }
 
 model User{
@@ -30,4 +36,72 @@ model User{
   roleId String @db.ObjectId  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  status UserStatus @default(Approved)
+  attorney Attorney?
+  client Client?
 }
+
+model Attorney{
+  id String @id @map("_id") @default(auto()) @db.ObjectId
+  user User @relation(fields: [userId],references: [id])
+  userId String @unique @db.ObjectId
+  attorneyClientMapping AttorneyClientMapping[]
+  description String?
+  licenseNumber Int?
+  contactNumber Int?
+  reviews Review[]
+}
+
+model Client{
+  id String @id @map("_id") @default(auto()) @db.ObjectId
+  user User @relation(fields: [userId],references: [id])
+  userId String @unique @db.ObjectId
+  attorneysLink AttorneyClientMapping[]
+  reviews Review[]
+}
+
+// model Attorney{
+//   id String @id @map("_id") @default(auto()) @db.ObjectId
+//   user User @relation(fields: [userId],references: [id])
+//   userId String @unique @db.ObjectId
+  // attorneyClientMapping AttorneyClientMapping[]
+//   description String?
+//   licenseNumber Int?
+//   contactNumber Int?
+//   clients Client[]
+//   reviews Review[]
+// }
+
+// model Client{
+//   id String @id @map("_id") @default(auto()) @db.ObjectId
+//   user User @relation(fields: [userId],references: [id])
+//   userId String @unique @db.ObjectId
+  // attorneyClientMapping AttorneyClientMapping[]
+//   attorney Attorney @relation(fields: [attorneyId],references: [id])
+//   attorneyId String @db.ObjectId
+//   reviews Review[]
+// }
+
+
+model AttorneyClientMapping{
+  id String @id @map("_id") @default(auto()) @db.ObjectId
+  attorney Attorney @relation(fields: [attorneyId], references: [id])
+  attorneyId String @db.ObjectId
+  client Client @relation(fields: [clientId],references: [id])
+  clientId String @db.ObjectId
+  createdAt DateTime @default(now())
+}
+
+model Review{
+  id String @id @map("_id") @default(auto()) @db.ObjectId
+  attorney Attorney @relation(fields: [attorneyId],references: [id])
+  attorneyId String @db.ObjectId
+  client Client @relation(fields: [clientId],references: [id])
+  clientId String @db.ObjectId
+  punctuality Int
+  behaviour Int
+  paymentTimeliness Int
+  preparedness Int
+  reliability Int
+}
+

@@ -4,6 +4,9 @@ import dotenv from 'dotenv'
 import initDB from './config/initDB.js'
 import authRoutes from './routes/authRoutes.js'
 import cookieParser from 'cookie-parser'
+import adminRoutes from './routes/adminRoutes.js'
+import { adminCheck, attorneyCheck, authCheck } from './middlewares/authMiddleware.js'
+import attorneyRoutes from './routes/attorneyRoutes.js'
 
 const app = express()
 dotenv.config()
@@ -17,6 +20,8 @@ app.get("/",(req,res)=>{
     res.send("Hi")
 })
 app.use("/api/v1/auth",authRoutes)
+app.use("/api/v1/admin",authCheck,adminCheck,adminRoutes)
+app.use("/api/v1/attorney",authCheck,attorneyCheck,attorneyRoutes)
 
 
 app.listen(PORT,()=>{

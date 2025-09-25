@@ -16,11 +16,16 @@ export const handleSignup = async(req,res)=>{
         if(existingUser)return res.status(400).json({message:"User with this email already exists"})
 
         const role = await prisma.role.findUnique({
-            where:{name:roleName || "Client"}
+            where:{roleName:roleName || "Client"}
         })
 
         if (!role) return res.status(400).json({ message: "Invalid role" });
         const hashedPassword = await bcrypt.hash(password,10)
+
+        let status = 'Approved'
+        if(role.roleName==='Attorney'){
+            status = 'Pending'
+        }
 
         const user = await prisma.user.create({
             data:{
@@ -28,9 +33,22 @@ export const handleSignup = async(req,res)=>{
                 lastName,
                 email,
                 password:hashedPassword,
-                roleId:role.id
+                roleId:role.id,
+                status
             }
         })
+
+        if(role.roleName==="Client"){
+            await prisma.client.create({
+                data:{userId:user.id}
+            })
+        }
+
+        if(status==='Pending'){
+            return res.status(201).json({
+                message:"Signup successful. Awaiting admin approval."
+            })
+        }
 
         const token = generateToken(user,res)
 
@@ -80,7 +98,7 @@ export const handleLogout = async(req,res)=>{
 
 export const handleProfile=async(req,res)=>{
     try {
-        
+        res.json(req.user)
     } catch (error) {
         console.log(error)
         res.status(500).json({message:"Internal server error"})
