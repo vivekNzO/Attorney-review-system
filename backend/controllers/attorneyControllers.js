@@ -4,7 +4,7 @@ export const getAttorneyInfo = async (req, res) => {
   try {
     const { attorneyId } = req.params;
     const attorney = await prisma.attorney.findUnique({
-      where: { id: attorneyId },
+      where: { id:attorneyId },
       include: {
         user: {
           select: {
@@ -133,5 +133,39 @@ export const getAllAttorneys = async (req, res) => {
     res.status(200).json(attorneys);
   } catch (error) {
     console.log(error);
+  }
+};
+
+
+export const getClientsUnderAttorney = async (req, res) => {
+  try {
+    const attorneyId = req.user.attorney.id;
+
+    const mappings = await prisma.attorneyClientMapping.findMany({
+      where: { attorneyId },
+      include: {
+        client: {
+          include: {
+            user: {
+              select: {
+                firstName: true,
+                lastName: true,
+                email: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    // Filter out broken mappings (client = null)
+    const clients = mappings
+      .map(m => m.client)
+      .filter(c => c !== null);
+
+    res.status(200).json(clients);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };

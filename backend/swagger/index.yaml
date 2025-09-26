@@ -307,7 +307,7 @@ paths:
         '500':
           description: Internal server error
 
-  /attorney/{attorneyId}:
+  /attorney/{attorneyId}/info:
     get:
       summary: Get attorney details
       description: Get all details of an attorney corresponding to attorneyId
@@ -338,6 +338,18 @@ paths:
         '500':
           description: Internal server error
 
+  /attorney/clients:
+    get:
+      summary: Get clients under attorney
+      description: Get all the clients that are registered under the current attorney
+      tags:
+      - Attorney
+      responses:
+        '200':
+          description: Clients fetched successfully
+        '500':
+          description: Internal server error
+
   /client/{id}:
     get:
       summary: Get Client details
@@ -351,6 +363,18 @@ paths:
         description: clientId
         schema:
           type: string
+      responses:
+        '200':
+          description: Details fetched successfully
+        '500':
+          description: Internal server error
+
+  /client:
+    get:
+      summary: Get all clients
+      description: Get all the clients that are registered in the application
+      tags:
+      - Client
       responses:
         '200':
           description: Details fetched successfully
