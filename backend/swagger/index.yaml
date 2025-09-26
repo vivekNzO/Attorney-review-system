@@ -12,11 +12,15 @@ components:
       scheme: bearer
       bearerFormat: JWT
 
+security:
+- BearerAuth: []
+
 paths:
   /auth/signup:
     post:
       summary: User SignUp
       description: Register a new user with email
+      security: []
       tags:
       - Auth
       requestBody:
@@ -92,6 +96,7 @@ paths:
     post:
       summary: User Login
       description: Authenticate user and return jwt token
+      security: []
       tags:
       - Auth
       requestBody:
@@ -143,6 +148,7 @@ paths:
     post:
       description: User Logout
       summary: Clear jwt cookie and logout
+      security: []
       tags:
       - Auth
       responses:
@@ -238,15 +244,95 @@ paths:
             schema:
               type: object
               required:
-              - clientId
+              - clientEmail
               properties:
-                type: string
-                example: "clientId"
+                clientEmail:
+                  type: string
+                  example: "client@example.com"
 
       responses:
         '201':
           description: Client successfully assigned to attorney
         '403':
           description: User is not an attorney
+        '500':
+          description: Internal server error
+
+  /attorney/review/{clientId}:
+    post:
+      summary: Add review to client
+      description: Give your client a review based on professional characteristics
+      tags:
+      - Attorney
+      parameters:
+      - in: path
+        name: clientId
+        required: true
+        schema:
+          type: string
+        description: clientId
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - punctuality
+              - behaviour
+              - paymentTimeliness
+              - preparedness
+              - reliability
+              properties:
+                punctuality:
+                  type: integer
+                  example: 3
+                behaviour:
+                  type: integer
+                  example: 4
+                paymentTimeliness:
+                  type: integer
+                  example: 5
+                preparedness:
+                  type: integer
+                  example: 3.5
+                reliability:
+                  type: integer
+                  example: 4
+      responses:
+        '201':
+          description: Review added successfully
+        '400':
+          description: All fields are required
+        '500':
+          description: Internal server error
+
+  /attorney/{attorneyId}:
+    get:
+      summary: Get attorney details
+      description: Get all details of an attorney corresponding to attorneyId
+      tags:
+      - Attorney
+      parameters:
+      - in: path
+        name: attorneyId
+        schema:
+          type: string
+        description: AttorneyId
+      responses:
+        '200':
+          description: details fetched successfully
+        '500':
+          description: Internal server error
+
+  /attorney:
+    get:
+      summary: Get all attorneys
+      description: List all the attorneys approved by the Admin
+      tags:
+      - Attorney
+      responses:
+        '200':
+          description: Success
         '500':
           description: Internal server error

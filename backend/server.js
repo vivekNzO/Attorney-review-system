@@ -5,7 +5,7 @@ import initDB from './config/initDB.js'
 import authRoutes from './routes/authRoutes.js'
 import cookieParser from 'cookie-parser'
 import adminRoutes from './routes/adminRoutes.js'
-import { adminCheck, attorneyCheck, authCheck } from './middlewares/authMiddleware.js'
+import { adminCheck, authCheck } from './middlewares/authMiddleware.js'
 import attorneyRoutes from './routes/attorneyRoutes.js'
 import swaggerRouter from './swagger/swagger.js'
 
@@ -19,9 +19,11 @@ app.use(cookieParser())
 app.use("/api/v1/api-docs",swaggerRouter)
 
 const PORT = process.env.PORT
+
+
 app.use("/api/v1/auth",authRoutes)
 app.use("/api/v1/admin",authCheck,adminCheck,adminRoutes)
-app.use("/api/v1/attorney",authCheck,attorneyCheck,attorneyRoutes)
+app.use("/api/v1/attorney",authCheck,attorneyRoutes)
 
 
 app.listen(PORT,()=>{
