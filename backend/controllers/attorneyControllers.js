@@ -26,7 +26,7 @@ export const addClientToAttorney = async (req, res) => {
   try {
     const { clientEmail } = req.body;
     const attorneyId = req.user.attorney.id;
-    // console.log(req.user)
+    // console.log(req.user.attorney)
     if (!attorneyId)
       return res.status(403).json({ message: "Not an attorney" });
 
@@ -76,14 +76,28 @@ export const addClientReview = async (req, res) => {
       reliability,
     } = req.body;
     if (
-      !punctuality ||
-      !behaviour ||
-      !paymentTimeliness ||
-      !preparedness ||
-      !reliability
+      punctuality == null ||
+      behaviour == null ||
+      paymentTimeliness == null ||
+      preparedness == null ||
+      reliability == null
     ) {
       return res.status(400).json({ message: "All fields are required" });
     }
+
+    const mapping = await prisma.attorneyClientMapping.findFirst({
+      where: {
+        attorney:{id:attorneyId},
+        client:{id:clientId}
+      },
+    });
+
+    // console.log(mapping)
+
+    if (!mapping)
+      return res
+        .status(403)
+        .json({ message: "Client is not assigned under you" });
 
     const review = await prisma.review.create({
       data: {

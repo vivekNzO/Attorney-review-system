@@ -8,6 +8,7 @@ import adminRoutes from './routes/adminRoutes.js'
 import { adminCheck, authCheck } from './middlewares/authMiddleware.js'
 import attorneyRoutes from './routes/attorneyRoutes.js'
 import swaggerRouter from './swagger/swagger.js'
+import clientRoutes from './routes/clientRoutes.js'
 
 const app = express()
 dotenv.config()
@@ -24,6 +25,7 @@ const PORT = process.env.PORT
 app.use("/api/v1/auth",authRoutes)
 app.use("/api/v1/admin",authCheck,adminCheck,adminRoutes)
 app.use("/api/v1/attorney",authCheck,attorneyRoutes)
+app.use("/api/v1/client",authCheck,clientRoutes)
 
 
 app.listen(PORT,()=>{

@@ -316,6 +316,7 @@ paths:
       parameters:
       - in: path
         name: attorneyId
+        required: true
         schema:
           type: string
         description: AttorneyId
@@ -334,5 +335,24 @@ paths:
       responses:
         '200':
           description: Success
+        '500':
+          description: Internal server error
+
+  /client/{id}:
+    get:
+      summary: Get Client details
+      description: Get all details of a client along with aggregated reviews correspoding to Id
+      tags:
+      - Client
+      parameters:
+      - in: path
+        name: id
+        required: true
+        description: clientId
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Details fetched successfully
         '500':
           description: Internal server error
