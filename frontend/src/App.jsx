@@ -12,6 +12,8 @@ import AttorneySignup from './pages/AttorneySignup'
 
 function App() {
 
+  
+
   return (
     <>
     <Navbar/>

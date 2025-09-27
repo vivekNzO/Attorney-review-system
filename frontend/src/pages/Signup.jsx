@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import API from "../utils/axios";
+import toast from "react-hot-toast";
 
 const Signup = () => {
   const [form, setForm] = useState({
@@ -15,9 +17,15 @@ const Signup = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault()
     try {
-    } catch (error) {}
+      const res  = await API.post("/auth/signup",form)
+      toast.success("Sign Up successful")
+    } catch (error) {
+      console.log(error.message)
+      toast.error("Something went wrong")
+    }
   };
 
   return (
@@ -55,7 +63,7 @@ const Signup = () => {
             <div>
               <input
                 type="email"
-                name="firstName"
+                name="email"
                 placeholder="Email"
                 value={form.email}
                 onChange={handleChange}
