@@ -6,7 +6,7 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export const handleSignup = async(req,res)=>{
     try {
-        const {firstName,lastName,email,password,roleName} = req.body
+        const {firstName,lastName,email,password,roleName,licenseNumber} = req.body
         if(!firstName || !lastName || !email || !password){
             return res.status(400).json({message:"All fields are required"})
         }
