@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../store/AuthContext";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -9,13 +10,15 @@ const Login = () => {
 
   const navigate = useNavigate();
 
+  const {login} = useContext(AuthContext)
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async () => {
-    try {
-    } catch (error) {}
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    login(formData)
   };
   return (
     <div className="min-h-[calc(100vh-84px)] flex">

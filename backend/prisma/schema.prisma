@@ -39,6 +39,8 @@ model User{
   status UserStatus @default(Approved)
   attorney Attorney?
   client Client?
+  licenseNumber String?
+  profilePhoto String?
 }
 
 model Attorney{
@@ -47,7 +49,7 @@ model Attorney{
   userId String @unique @db.ObjectId
   attorneyClientMapping AttorneyClientMapping[]
   description String?
-  licenseNumber Int?
+  licenseNumber String?
   contactNumber Int?
   reviews Review[]
 }

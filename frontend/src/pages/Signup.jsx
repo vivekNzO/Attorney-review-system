@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useCallback, useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../utils/axios";
 import toast from "react-hot-toast";
+import { AuthContext } from "../store/AuthContext";
 
 const Signup = () => {
   const [form, setForm] = useState({
@@ -17,16 +18,11 @@ const Signup = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  const {signup} = useContext(AuthContext)
+  const handleSubmit = async(e)=>{
     e.preventDefault()
-    try {
-      const res  = await API.post("/auth/signup",form)
-      toast.success("Sign Up successful")
-    } catch (error) {
-      console.log(error.message)
-      toast.error("Something went wrong")
-    }
-  };
+    signup(form)
+  }
 
   return (
     <div className="min-h-[calc(100vh-84px)] flex">

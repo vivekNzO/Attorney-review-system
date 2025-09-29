@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { AuthContext } from '../store/AuthContext'
 
 const AttorneySignup = () => {
   const [formData,setFormData] = useState({
-    firtName:"",
+    firstName:"",
     lastName:"",
     email:"",
     password:"",
@@ -12,16 +13,15 @@ const AttorneySignup = () => {
   })
 
   const navigate = useNavigate()
+  const {signup} = useContext(AuthContext)
 
   const handleChange = (e)=>{
     setFormData({...formData,[e.target.name]:e.target.value})
   }
-  const handleSubmit=async()=>{
-    try {
-      
-    } catch (error) {
-      
-    }
+  const handleSubmit=async(e)=>{
+    e.preventDefault()
+    const res = await signup(formData)
+    if(res.success)navigate("/wait-for-approval")
   }
   return (
     <div className='min-h-[calc(100vh-84px)] flex'>
@@ -36,7 +36,7 @@ const AttorneySignup = () => {
           type='text'
           name='firstName'
           placeholder='First Name'
-          value={formData.firtName}
+          value={formData.firstName}
           required
           onChange={handleChange}
           className='w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-black/50'
@@ -77,10 +77,10 @@ const AttorneySignup = () => {
         </div>
         <div>
         <input
-          type='text'
-          name='firstName'
-          placeholder='First Name'
-          value={formData.firtName}
+          type='password'
+          name='password'
+          placeholder='Password'
+          value={formData.password}
           required
           onChange={handleChange}
           className='w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-black/50'
