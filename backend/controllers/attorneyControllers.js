@@ -74,6 +74,7 @@ export const addClientReview = async (req, res) => {
       paymentTimeliness,
       preparedness,
       reliability,
+      feedback
     } = req.body;
     if (
       punctuality == null ||
@@ -99,6 +100,14 @@ export const addClientReview = async (req, res) => {
         .status(403)
         .json({ message: "Client is not assigned under you" });
 
+      const existingReview = await prisma.review.findFirst({
+        where:{attorneyId,clientId}
+      })
+
+      if(existingReview){
+        return res.status(400).json({message:"You have already reviewed this client"})
+      }
+
     const review = await prisma.review.create({
       data: {
         attorneyId,
@@ -108,6 +117,7 @@ export const addClientReview = async (req, res) => {
         paymentTimeliness,
         preparedness,
         reliability,
+        feedback
       },
     });
     res.status(201).json({ message: "Review added successfully" }, review);

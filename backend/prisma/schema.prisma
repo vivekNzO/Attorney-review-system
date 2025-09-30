@@ -107,5 +107,6 @@ model Review{
   paymentTimeliness Int
   preparedness Int
   reliability Int
+  feedback String?
 }
 

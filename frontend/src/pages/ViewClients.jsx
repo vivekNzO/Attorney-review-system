@@ -3,6 +3,7 @@ import API from "../utils/axios";
 import Card from "../components/Card";
 import ClientCard from "../components/ClientCard";
 import Pagination from "../components/Pagination";
+import Loading from "../Skeletons/Loading";
 
 const ViewClients = () => {
   const [data, setData] = useState([]);
@@ -43,7 +44,7 @@ const ViewClients = () => {
   const clients = filteredClients.slice(startIndex,endIndex)
 
   if (data.length === 0) {
-    return <p className="text-center text-2xl">No Clients Available</p>;
+    return <Loading/>
   }
   return (
     <div className="min-h-[calc(100vh-84px)] p-20">

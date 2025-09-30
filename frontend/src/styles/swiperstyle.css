@@ -1,0 +1,29 @@
+.swiper-button-next,
+.swiper-button-prev {
+  color: #010913; /* Tailwind's gray-800 */
+  background-color: rgba(255, 255, 255, 0.1);
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.swiper-button-next {
+  right: 10px; /* distance from right edge */
+}
+
+.swiper-button-prev {
+  left: 10px; /* distance from left edge */
+}
+
+/* optional hover effect */
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+  background-color: #010913; /* Tailwind blue-600 */
+  color: white;
+}
