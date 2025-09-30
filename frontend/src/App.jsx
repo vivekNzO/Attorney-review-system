@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import { Toaster } from "react-hot-toast";
 import HomePage from "./pages/HomePage";
@@ -31,15 +31,15 @@ function App() {
     <>
       <Navbar />
       <Routes>
-        <Route path="/signup"  element={authUser? <HomePage/> : <Signup/>} />
-        <Route path="/login" element={authUser? <HomePage/> : <Login/>} />
-        <Route path="/attorney-signup" element={authUser? <HomePage/>:<AttorneySignup/>} />
+        <Route path="/signup"  element={!authUser?<Signup/> : <Navigate to={"/"}/>} />
+        <Route path="/login" element={!authUser?<Login/> : <Navigate to={"/"}/>} />
+        <Route path="/attorney-signup" element={!authUser?<AttorneySignup/> : <Navigate to={"/"}/>} />
         <Route path="/" element=<HomePage/> />
-        <Route path="/admin" element={authUser?.role==='Admin'?<AdminDashboard/>:<HomePage/>} />
+        {/* <Route path="/admin" element={authUser?.role==='Admin'?<AdminDashboard/>:<Navigate to={"/"}/>} /> */}
         <Route path="/wait-for-approval" element=<WaitForApproval/>/>
-        <Route path="/pending-requests" element={authUser?.role==='Admin'?<PendingRequests/> : <HomePage/>}/>
+        <Route path="/pending-requests" element={authUser?.role==='Admin'?<PendingRequests/> : <Navigate to={"/"}/>}/>
         <Route path="/browse-clients" element=<ViewClients/> />
-        <Route path="/client-profile/:id" element=<ClientProfile/>/>
+        <Route path="/client-profile/:id" element={authUser?<ClientProfile/> : <Navigate to={"/"}/>}/>
       </Routes>
       <Toaster />
     </>

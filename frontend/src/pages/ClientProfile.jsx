@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import API from "../utils/axios.js";
 import Loading from "../Skeletons/Loading.jsx";
@@ -6,13 +6,19 @@ import { getRandomAvatar } from "../utils/avatar.js";
 import StarRating from "../components/StarRating.jsx";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
-import {Navigation} from "swiper/modules"
-import "swiper/css/navigation"
-import '../styles/swiperstyle.css'
+import { Navigation } from "swiper/modules";
+import "swiper/css/navigation";
+import "../styles/swiperstyle.css";
+import { AuthContext } from "../store/AuthContext.jsx";
+import {AttorneyContext} from "../store/AttorneyContext.jsx"
+import ClientProfileSkeleton from "../Skeletons/ClientProfileSkeleton.jsx";
 
 const ClientProfile = () => {
   const { id } = useParams();
   const [data, setData] = useState(null);
+  const { authUser } = useContext(AuthContext);
+  const{handleAddClient} = useContext(AttorneyContext)
+
   useEffect(() => {
     const fetchClient = async () => {
       const res = await API.get(`/client/${id}`);
@@ -22,7 +28,7 @@ const ClientProfile = () => {
   }, [id]);
 
   if (!data) {
-    return <Loading />;
+    return <ClientProfileSkeleton />;
   }
 
   const { client, aggregatedReviews, reviews } = data;
@@ -30,17 +36,29 @@ const ClientProfile = () => {
   return (
     <div className="min-h-[calc(100vh-84px)] px-20 py-10">
       {/* client info */}
-      <div className="flex items-center gap-4 bg-white shadow rounded-xl p-6">
-        <img
-          src={getRandomAvatar()}
-          className="w-20 h-20 rounded-full object-cover"
-        />
-        <div>
-          <h2 className="text-2xl font-semibold">
-            {client.user.firstName} {client.user.lastName}
-          </h2>
-          <p className="text-gray-600">{client.user.email}</p>
+      <div className="flex items-center gap-4 bg-white shadow rounded-xl p-6 justify-between">
+        <div className="flex">
+          <img
+            src={getRandomAvatar()}
+            className="w-20 h-20 rounded-full object-cover"
+          />
+          <div className="flex flex-col  justify-center">
+            <h2 className="text-2xl font-semibold">
+              {client.user.firstName} {client.user.lastName}
+            </h2>
+            <p className="text-gray-600">{client.user.email}</p>
+          </div>
         </div>
+
+        {authUser.role === "Attorney" && (
+          <button
+            className="bg-green-400 px-8 py-4 rounded-3xl hover:bg-green-500 transition-colors shadow"
+            onClick={() => {
+              handleAddClient(client.user.email)}}
+          >
+            Add Client
+          </button>
+        )}
       </div>
 
       {/* summary */}
@@ -63,7 +81,7 @@ const ClientProfile = () => {
       <div className="mt-5">
         <h3 className="text-xl font-bold mb-4">Detailed Reviews</h3>
         <Swiper
-        modules={[Navigation]}
+          modules={[Navigation]}
           spaceBetween={20}
           slidesPerView={3}
           navigation

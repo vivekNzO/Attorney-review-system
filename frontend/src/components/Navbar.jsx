@@ -13,11 +13,18 @@ const Navbar = () => {
         </div>
         <div className='flex justify-around gap-10 '>
 
+        {authUser?.role==='Attorney' && 
+        <button>Your Clients</button>
+        }
+
         {/* Browse clients */}
+        {authUser && 
         <button className='cursor-pointer hover:underline'
         onClick={()=>navigate("/browse-clients")}
-        >Browse-Clients</button>
-
+        >
+          {authUser.role==='Attorney'? "Add-client":"Browse-clients"}
+        </button>
+        }
         {/* pending requests */}
 
         {authUser?.role==='Admin' && 
