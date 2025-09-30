@@ -21,8 +21,7 @@ const cleanOrphanClients = async () => {
     }
 
     console.log("Cleanup of orphan clients completed.");
-
-    // Repeat similarly for Attorneys
+    
     const attorneys = await prisma.attorney.findMany({
       select: { id: true, userId: true },
     });

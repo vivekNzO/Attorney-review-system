@@ -3,17 +3,17 @@ import prisma from "../config/prismaClient.js";
 export const getAllClients = async (req, res) => {
   try {
     const clients = await prisma.client.findMany({
-        include:{
-            user:{
-                select:{
-                    firstName:true,
-                    lastName:true,
-                    email:true
-                }
-            }
-        }
-    })
-    res.status(200).json(clients)
+      include: {
+        user: {
+          select: {
+            firstName: true,
+            lastName: true,
+            email: true,
+          },
+        },
+      },
+    });
+    res.status(200).json(clients);
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Internal server error" });
@@ -35,18 +35,37 @@ export const getClientInfo = async (req, res) => {
         },
       },
     });
+
     if (!client) return res.status(404).json({ message: "Client not found" });
     const aggregatedReviews = await prisma.review.aggregate({
-        _avg:{
-            punctuality:true,
-            behaviour: true,
-            paymentTimeliness: true,
-            preparedness: true,
-            reliability:true,
-        },
-        where:{clientId:id}
+      _avg: {
+        punctuality: true,
+        behaviour: true,
+        paymentTimeliness: true,
+        preparedness: true,
+        reliability: true,
+      },
+      where: { clientId: id },
     });
-    res.status(200).json({client,aggregatedReviews});
+
+    const reviews = await prisma.review.findMany({
+      where: { clientId: id },
+      include: {
+        attorney: {
+          include: {
+            user: {
+              select: {
+                firstName: true,
+                lastName: true,
+                email: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    res.status(200).json({ client, aggregatedReviews, reviews });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Internal server error" });
