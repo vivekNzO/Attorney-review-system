@@ -4,7 +4,7 @@ export const getAttorneyInfo = async (req, res) => {
   try {
     const { attorneyId } = req.params;
     const attorney = await prisma.attorney.findUnique({
-      where: { id:attorneyId },
+      where: { userId:attorneyId },
       include: {
         user: {
           select: {
@@ -25,7 +25,7 @@ export const getAttorneyInfo = async (req, res) => {
 export const addClientToAttorney = async (req, res) => {
   try {
     const { clientEmail } = req.body;
-    const attorneyId = req.user.attorney.id;
+    const attorneyId = req.user.id;
     // console.log(req.user.attorney)
     if (!attorneyId)
       return res.status(403).json({ message: "Not an attorney" });
@@ -43,7 +43,7 @@ export const addClientToAttorney = async (req, res) => {
     if (!client) return res.status(404).json({ message: "Client not found" });
 
     const existingLink = await prisma.attorneyClientMapping.findFirst({
-      where: { attorneyId, clientId: client.id },
+      where: { attorneyId, clientId: client.userId },
     });
 
     if (existingLink) {
@@ -52,12 +52,29 @@ export const addClientToAttorney = async (req, res) => {
     const clientLink = await prisma.attorneyClientMapping.create({
       data: {
         attorneyId: attorneyId,
-        clientId: client.id,
+        clientId: client.userId,
       },
+      include:{
+        client:{
+          include:{user:{
+            select:{
+              firstName:true,
+              lastName:true,
+              email:true,
+            }
+          }}
+        }
+      }
     });
     res
       .status(201)
-      .json({ message: "Client assigned to you successfully", clientLink });
+      .json({ message: "Client assigned to you successfully",
+        client:{
+          id:clientLink.id,
+          userId:clientLink.client.userId,
+          user:clientLink.client.user
+        }
+       });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Internal server error" });
@@ -67,7 +84,7 @@ export const addClientToAttorney = async (req, res) => {
 export const addClientReview = async (req, res) => {
   try {
     const { clientId } = req.params;
-    const attorneyId = req.user.attorney.id;
+    const attorneyId = req.user.id;
     const {
       punctuality,
       behaviour,
@@ -88,8 +105,8 @@ export const addClientReview = async (req, res) => {
 
     const mapping = await prisma.attorneyClientMapping.findFirst({
       where: {
-        attorney:{id:attorneyId},
-        client:{id:clientId}
+        attorneyId,
+        clientId
       },
     });
 
@@ -149,7 +166,7 @@ export const getAllAttorneys = async (req, res) => {
 
 export const getClientsUnderAttorney = async (req, res) => {
   try {
-    const attorneyId = req.user.attorney.id;
+    const attorneyId = req.user.id;
 
     const mappings = await prisma.attorneyClientMapping.findMany({
       where: { attorneyId },

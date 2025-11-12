@@ -10,27 +10,26 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-  const {login} = useContext(AuthContext)
+  const { login, authLoading } = useContext(AuthContext);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    login(formData)
+    e.preventDefault();
+    login(formData);
   };
   return (
     <div className="min-h-[calc(100vh-84px)] flex">
       {/* Left side illustration */}
       <div className="hidden md:flex w-1/2  items-center justify-center p-20 ">
-      <div className="text-center">
-        <img
-            src="/law2.jpg"
-            className="mx-auto"
-        />
-        <p className="text-gray-600 mt-2">Pick up where you left off — your legal journey continues here.</p>
-      </div>
+        <div className="text-center">
+          <img src="/law2.jpg" className="mx-auto" />
+          <p className="text-gray-600 mt-2">
+            Pick up where you left off — your legal journey continues here.
+          </p>
+        </div>
       </div>
       {/* Right side form */}
       <div className="flex flex-col items-center justify-center w-full md:w-1/2 bg-white px-10 lg:px-20">
@@ -60,12 +59,22 @@ const Login = () => {
                 className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-black/50"
               />
             </div>
-            <button type="submit" className="w-full bg-black/80 text-white hover:bg-black font-semibold py-2 rounded-xl transition-colors ">
-                Log In
+            <button
+            disabled={authLoading}
+              type="submit"
+              className="w-full bg-black/80 text-white hover:bg-black font-semibold py-2 rounded-xl transition-colors "
+            >
+              Log In
             </button>
           </form>
           <div className="text-center mt-6">
-            <span>Don't have an account? </span><span className="text-red-500 hover:underline cursor-pointer" onClick={()=>navigate('/signup')}>Register here</span>
+            <span>Don't have an account? </span>
+            <span
+              className="text-red-500 hover:underline cursor-pointer"
+              onClick={() => navigate("/signup")}
+            >
+              Register here
+            </span>
           </div>
         </div>
       </div>

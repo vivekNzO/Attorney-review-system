@@ -16,6 +16,9 @@ import WaitForApproval from "./pages/WaitForApproval";
 import PendingRequests from "./pages/PendingRequests";
 import ViewClients from "./pages/ViewClients";
 import ClientProfile from "./pages/ClientProfile";
+import MyClients from "./pages/MyClients";
+import Profile from "./pages/Profile";
+import Review from "./pages/Review"
 
 function App() {
   const { authUser, loading } = useContext(AuthContext);
@@ -23,7 +26,6 @@ function App() {
   console.log(authUser);
 
   if(!authUser && loading){
-    
     return <Loading/>
   }
 
@@ -36,10 +38,13 @@ function App() {
         <Route path="/attorney-signup" element={!authUser?<AttorneySignup/> : <Navigate to={"/"}/>} />
         <Route path="/" element=<HomePage/> />
         {/* <Route path="/admin" element={authUser?.role==='Admin'?<AdminDashboard/>:<Navigate to={"/"}/>} /> */}
-        <Route path="/wait-for-approval" element=<WaitForApproval/>/>
+        <Route path="/wait-for-approval" element={authUser? <WaitForApproval/> : <Navigate to={"/"}/>}/>
         <Route path="/pending-requests" element={authUser?.role==='Admin'?<PendingRequests/> : <Navigate to={"/"}/>}/>
-        <Route path="/browse-clients" element=<ViewClients/> />
-        <Route path="/client-profile/:id" element={authUser?<ClientProfile/> : <Navigate to={"/"}/>}/>
+        <Route path="/browse-clients" element={authUser? <ViewClients/> : <Navigate to={"/"}/>} />
+        <Route path="/client-profile/:userId" element={authUser?.role==='Attorney'?<ClientProfile/> : <Navigate to={"/"}/>}/>
+        <Route path="/profile/:userId" element={authUser? <Profile/> : <Navigate to={"/"}/>}/>
+        <Route path="/my-clients" element={authUser?.role==='Attorney' ? <MyClients/> : <Navigate to={"/"}/>} />
+        <Route path="/review/:userId" element={authUser?.role==='Attorney'? <Review/> : <Navigate to={"/"}/>}/>
       </Routes>
       <Toaster />
     </>

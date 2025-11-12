@@ -13,6 +13,7 @@ export const getAllClients = async (req, res) => {
         },
       },
     });
+
     res.status(200).json(clients);
   } catch (error) {
     console.log(error);
@@ -22,9 +23,9 @@ export const getAllClients = async (req, res) => {
 
 export const getClientInfo = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { userId } = req.params;
     const client = await prisma.client.findUnique({
-      where: { id },
+      where: { userId },
       include: {
         user: {
           select: {
@@ -45,11 +46,11 @@ export const getClientInfo = async (req, res) => {
         preparedness: true,
         reliability: true,
       },
-      where: { clientId: id },
+      where: { clientId: userId },
     });
 
     const reviews = await prisma.review.findMany({
-      where: { clientId: id },
+      where: { clientId: userId },
       include: {
         attorney: {
           include: {

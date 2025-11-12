@@ -1,44 +1,39 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import API from "../utils/axios";
 import Card from "../components/Card";
 import ClientCard from "../components/ClientCard";
 import Pagination from "../components/Pagination";
 import Loading from "../Skeletons/Loading";
+import { AttorneyContext } from "../store/AttorneyContext";
 
-const ViewClients = () => {
-  const [data, setData] = useState([]);
+const MyClients = () => {
+
   const [searchEmail, setSearchEmail] = useState("");
   const [filteredClients, setFilteredClients] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 12;
 
-  const fetchClients = async () => {
-    try {
-      const res = await API.get("/client");
-      setData(res.data);
-      setFilteredClients(res.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  useEffect(() => {
-    fetchClients();
-  }, []);
+  const {assignedClients,fetchAssignedClients} = useContext(AttorneyContext)
 
   useEffect(() => {
-    const filtered = data.filter((client)=>{
-      const fullName = `${client.user.firstName} ${client.user.LastName}`.toLowerCase()
+    fetchAssignedClients()
+  }, []);
+
+  useEffect(()=>{
+    const filtered = assignedClients.filter((client)=>{
+      const fullName = `${client.user.firstName}v${client.user.lastName}`.toLowerCase()
       const email = client.user.email.toLowerCase()
       const search = searchEmail.toLowerCase()
       return fullName.includes(search) || email.includes(search)
     })
-    setFilteredClients(filtered);
-    setCurrentPage(1);
-  }, [data, searchEmail]);
+
+    setFilteredClients(filtered)
+    setCurrentPage(1)
+  },[assignedClients,searchEmail])
 
   useEffect(() => {
-    console.log(filteredClients);
-  }, [data]);
+    console.log("Assigned clients: ",assignedClients);
+  }, []);
 
 
   const totalPages = Math.ceil(filteredClients.length/itemsPerPage)
@@ -46,9 +41,13 @@ const ViewClients = () => {
   const startIndex = endIndex-itemsPerPage
   const clients = filteredClients.slice(startIndex,endIndex)
 
-  if (data.length === 0) {
-    return <Loading/>
-  }
+if (!assignedClients) {
+  return <Loading />;
+}
+
+if (assignedClients.length === 0) {
+  return <div className="text-center text-gray-500">No clients assigned yet</div>;
+}
   return (
     <div className="min-h-[calc(100vh-84px)] p-20">
       <div className="flex items-center justify-center mb-10">
@@ -73,11 +72,11 @@ const ViewClients = () => {
         ))}
       </div>
       </div>
-      {clients.length>0  &&
+      {clients.length>0 && searchEmail.length===0 &&
       <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} totalPages={totalPages} />
       }
     </div>
   );
 };
 
-export default ViewClients;
+export default MyClients;

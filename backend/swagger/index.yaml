@@ -350,7 +350,7 @@ paths:
         '500':
           description: Internal server error
 
-  /client/{id}:
+  /client/{userId}:
     get:
       summary: Get Client details
       description: Get all details of a client along with aggregated reviews correspoding to Id
@@ -358,7 +358,7 @@ paths:
       - Client
       parameters:
       - in: path
-        name: id
+        name: userId
         required: true
         description: clientId
         schema:

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import API from "../utils/axios.js";
 import Loading from "../Skeletons/Loading.jsx";
 import { getRandomAvatar } from "../utils/avatar.js";
@@ -10,45 +10,28 @@ import { Navigation } from "swiper/modules";
 import "swiper/css/navigation";
 import "../styles/swiperstyle.css";
 import { AuthContext } from "../store/AuthContext.jsx";
-import { AttorneyContext } from "../store/AttorneyContext.jsx";
+import {AttorneyContext} from "../store/AttorneyContext.jsx"
 import ClientProfileSkeleton from "../Skeletons/ClientProfileSkeleton.jsx";
-import { FaCheckCircle } from "react-icons/fa";
-import { FaPen } from "react-icons/fa";
+import { FaCheckCircle } from 'react-icons/fa';
 
-const ClientProfile = () => {
+const Profile = () => {
   const { userId } = useParams();
   const [data, setData] = useState(null);
   const { authUser } = useContext(AuthContext);
-  const {
-    handleAddClient,
-    assignedClients,
-    fetchAssignedClients,
-    setAssignedClients,
-  } = useContext(AttorneyContext);
-
-  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchClient = async () => {
       const res = await API.get(`/client/${userId}`);
       setData(res.data);
     };
-    fetchAssignedClients();
     fetchClient();
   }, [userId]);
-
-  const isAssigned = assignedClients.some((c) => c.userId === userId);
 
   if (!data) {
     return <ClientProfileSkeleton />;
   }
 
   const { client, aggregatedReviews, reviews } = data;
-
-  const handleAdd = async () => {
-    handleAddClient(client.user.email);
-    setAssignedClients((prev) => [...prev, client]);
-  };
 
   return (
     <div className="min-h-[calc(100vh-84px)] px-20 py-10">
@@ -67,36 +50,6 @@ const ClientProfile = () => {
           </div>
         </div>
 
-        {/* show button for attorney perspective */}
-
-        <div className="flex items-center gap-8">
-          {authUser.role === "Attorney" && isAssigned &&  (
-            <div>
-              <button
-              onClick={()=>navigate(`/review/${client.userId}`)}
-               className="flex items-center gap-2 py-4 px-8 font-semibold rounded-3xl transition-colors shadow bg-yellow-300/90 hover:bg-yellow-400">
-                Review
-                <FaPen className="inline" />
-              </button>
-            </div>
-          )}
-
-          {authUser.role === "Attorney" &&
-            (!isAssigned ? (
-              <button
-                className="bg-green-400 px-8 py-4 rounded-3xl hover:bg-green-500 transition-colors shadow"
-                onClick={handleAdd}
-              >
-                Add Client
-              </button>
-            ) : (
-              <div className="flex bg-green-400 py-4 px-8 font-semibold rounded-3xl items-center justify-center">
-                <p className="">
-                  <FaCheckCircle className="inline" /> Assigned
-                </p>
-              </div>
-            ))}
-        </div>
       </div>
 
       {/* summary */}
@@ -183,4 +136,4 @@ const ClientProfile = () => {
   );
 };
 
-export default ClientProfile;
+export default Profile;

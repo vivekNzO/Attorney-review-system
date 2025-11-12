@@ -23,9 +23,20 @@ export const approveAttorney = async (req, res) => {
       include: { role: true },
     });
     if (!user) return res.status(404).json({ message: "Request not found" });
-    await prisma.attorney.create({
-        data:{userId:user.id,licenseNumber:user.licenseNumber}
-    });
+
+    const existingAttorney = await prisma.attorney.findUnique({
+      where:{userId:user.id}
+    })
+
+    if(!existingAttorney){
+      await prisma.attorney.create({
+        data:{
+          userId:user.id,
+          licenseNumber:user.licenseNumber
+        }
+      })
+    }
+
     res.status(200).json({ message: "Attorney approved successfully" });
   } catch (error) {
     console.log(error);

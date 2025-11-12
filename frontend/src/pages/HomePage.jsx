@@ -3,7 +3,7 @@ import Hero from '../components/Hero'
 
 const HomePage = () => {
   return (
-    <div className='min-h-[calc(100vh-84px)] p-24 w-full h-screen bg-linear-to-r  from-[#0E121A] to-[#2D2D2F] text-white'>
+    <div className='min-h-[calc(100vh-84px)] p-24 w-full bg-linear-to-r  from-[#0E121A] to-[#2D2D2F] text-white'>
       <Hero/>
     </div>
   )

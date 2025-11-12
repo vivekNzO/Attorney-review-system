@@ -4,6 +4,6 @@ import { getAllClients, getClientInfo } from '../controllers/clientControllers.j
 const router = express.Router()
 
 router.get("/",getAllClients)
-router.get("/:id",getClientInfo)
+router.get("/:userId",getClientInfo)
 
 export default router

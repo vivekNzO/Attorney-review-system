@@ -54,7 +54,6 @@ export const attorneyCheck = async (req, res, next) => {
     });
     if (!attorney) return res.status(403).json({ message: "Not an attorney" });
     req.user.attorney = attorney;
-    console.log(req.user.attorney);
     next();
   } catch (error) {
     console.log(error);

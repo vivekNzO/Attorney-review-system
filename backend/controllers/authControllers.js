@@ -7,15 +7,22 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export const handleSignup = async (req, res) => {
   try {
-    const { firstName, lastName, email, password, roleName, licenseNumber,profilePhoto } =
-      req.body;
+    const {
+      firstName,
+      lastName,
+      email,
+      password,
+      roleName,
+      licenseNumber,
+      profilePhoto,
+    } = req.body;
     if (!firstName || !lastName || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
     if (!emailRegex.test(email))
       return res.status(400).json({ message: "Invalid email format" });
     if (password.length < 6)
-      res
+      return res
         .status(400)
         .json({ message: "Password must be atleast 6 characters" });
     const existingUser = await prisma.user.findUnique({ where: { email } });
@@ -43,7 +50,7 @@ export const handleSignup = async (req, res) => {
       status = "Pending";
     }
 
-    if(!profilePhoto)profilePhoto=getRandomAvatar()
+    const profilePic = profilePhoto || getRandomAvatar();
 
     const user = await prisma.user.create({
       data: {
@@ -54,7 +61,7 @@ export const handleSignup = async (req, res) => {
         roleId: role.id,
         status,
         licenseNumber,
-        profilePhoto
+        profilePhoto: profilePic,
       },
       include: { role: true },
     });

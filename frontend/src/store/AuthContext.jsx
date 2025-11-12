@@ -7,6 +7,7 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [authUser, setAuthUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [authLoading,setAuthLoading] = useState(false)
 
   useEffect(() => {
     const checkAuth = async (req, res) => {
@@ -24,6 +25,8 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const signup = async(formData)=>{
+    if(authLoading)return
+    setAuthLoading(true)
     try {
         const res = await API.post("/auth/signup",formData)
         setAuthUser(res.data.user)
@@ -32,10 +35,14 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
         toast.error(error.response.data.message)
         return {success:false,error:error.response?.data?.message}
+    }finally{
+      setAuthLoading(false)
     }
   }
 
   const login = async(formData)=>{
+    if(authLoading)return 
+    setAuthLoading(true)
     try {
         const res = await API.post("/auth/login",formData)
         setAuthUser(res.data.user)
@@ -44,10 +51,14 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
         console.log(error)
         toast.error(error.response.data.message)
+    }finally{
+      setAuthLoading(false)
     }
   }
 
   const logout = async()=>{
+    if(authLoading)return
+    setAuthLoading(true)
     try {
         await API.post("/auth/logout")
         setAuthUser(null)
@@ -55,6 +66,8 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
         console.log(error)
         toast.error("Something went wrong")
+    }finally{
+      setAuthLoading(false)
     }
   }
 
